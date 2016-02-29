@@ -11,7 +11,7 @@
 @interface AMoAdInfeed : NSObject
 
 /// ネットワークタイムアウト時間を設定する（デフォルトは30.0秒）
-+ (void)setNetworkTimeoutSeconds:(NSTimeInterval)seconds;
++ (void)setTimeoutInterval:(NSTimeInterval)interval;
 
 /// 広告をロードする
 /// @param sid 管理画面から取得した64文字の英数字
