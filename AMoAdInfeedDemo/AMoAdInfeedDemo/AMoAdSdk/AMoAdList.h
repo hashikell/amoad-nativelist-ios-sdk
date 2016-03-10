@@ -21,4 +21,6 @@
 /// 表示間隔
 @property (nonatomic,readwrite,assign) NSInteger interval;
 
++ (AMoAdList *)parseDic:(NSDictionary *)dic;
+
 @end

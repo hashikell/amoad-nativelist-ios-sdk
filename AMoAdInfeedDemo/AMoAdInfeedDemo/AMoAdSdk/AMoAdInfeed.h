@@ -10,8 +10,8 @@
 /// ネイティブリスト広告
 @interface AMoAdInfeed : NSObject
 
-/// ネットワークタイムアウト時間を設定する（デフォルトは30.0秒）
-+ (void)setTimeoutInterval:(NSTimeInterval)interval;
+// タイムアウト時間（ミリ秒）を設定する：デフォルトは30,000ミリ秒
++ (void)setNetworkTimeoutMillis:(NSInteger)millis;
 
 /// 広告をロードする
 /// @param sid 管理画面から取得した64文字の英数字
