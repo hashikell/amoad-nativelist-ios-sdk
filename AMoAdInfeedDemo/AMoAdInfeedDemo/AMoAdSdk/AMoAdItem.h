@@ -29,8 +29,8 @@
 /// 遷移先URL
 @property (nonatomic,readwrite,copy) NSString *link;
 
-/// 遷移先URL（URLエンコードされたもの）
-@property (nonatomic,readwrite,copy) NSString *linkEncode;
+/// ユニット番号（広告取得数x4、キャッシュ数x2の場合、0, 1, 2, 3, 0, 1, 2, 3）
+@property (nonatomic,readwrite,assign) NSInteger unitNo;
 
 /// 広告表示時に呼び出す
 - (void)sendImpression;
@@ -41,5 +41,17 @@
 /// クリック時に呼び出す（カスタムURLスキームをハンドリングする）
 - (void)onClickWithCustomScheme:(NSString *)scheme
                         handler:(void (^)(NSString *url))handler;
+
+/// クリック時に呼び出す（複数のカスタムURLスキームをハンドリングする）
+- (void)onClickWithCustomSchemes:(NSArray<NSString *> *)schemes
+                         handler:(void (^)(NSString *url))handler;
+
+/// クリック時に呼び出す（全てのLPへの遷移をハンドリングする）
+/// Safari view controller を使う場合以外は、openURLでSafariを起動すること
+- (void)onClickWithHandler:(void (^)(NSString *url))handler;
+
+
+/// 開発用
++ (AMoAdItem *)parseDic:(NSDictionary *)dic;
 
 @end

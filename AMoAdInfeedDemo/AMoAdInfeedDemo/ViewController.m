@@ -118,7 +118,6 @@ static dispatch_queue_t iconLoadQueue;
 @end
 
 static NSString *const kSid1 = @"62056d310111552c000000000000000000000000000000000000000000000000";
-static NSString *const kCustomScheme = @"custom:";
 static const NSInteger kDataCount = 20;
 
 @implementation ViewController
@@ -139,8 +138,8 @@ static const NSInteger kDataCount = 20;
   userItemLoadQueue = dispatch_queue_create("com.amoad.sample.UserItemLoadQueue", NULL);
   iconLoadQueue = dispatch_queue_create("com.amoad.sample.IconLoadQueue", NULL);
 
-  // [SDK] タイムアウト時間を設定する
-  [AMoAdInfeed setTimeoutInterval:5.0];
+  // [SDK] タイムアウト時間を設定する：デフォルトは30,000ミリ秒
+  [AMoAdInfeed setNetworkTimeoutMillis:5000];
 
   // PullToRefresh
   UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
@@ -258,9 +257,8 @@ static const NSInteger kDataCount = 20;
   UserItem *ud = self.dataArray[indexPath.row];
 
   if (ud.adList) {
-    // [SDK] クリック時：
-    //   customSchemeに指定されたスキームの場合、handlerに遷移処理を委ねる
-    [ud.adList onClickWithCustomScheme:kCustomScheme handler:^(NSString *url) {
+    // [SDK] クリック時： handlerに遷移処理を委ねる
+    [ud.adList onClickWithHandler:^(NSString *url) {
 
       UIAlertController *alertController =
       [UIAlertController alertControllerWithTitle:@"広告クリック"
