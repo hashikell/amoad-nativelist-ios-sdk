@@ -24,6 +24,7 @@
 + (void)loadWithSid:(NSString *)sid
          completion:(void (^)(AMoAdList *adList, AMoAdResult result))completion
              option:(NSDictionary *)option;
++ (void)setAdRequestUrl:(NSString *)url;
 
 /// 使用不可
 - (instancetype)init __attribute__((unavailable("This method is not available.")));
