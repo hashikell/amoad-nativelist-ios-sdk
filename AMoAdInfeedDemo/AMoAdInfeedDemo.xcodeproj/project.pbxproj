@@ -23,6 +23,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E9721ADC1C97EA1200BE4C21 /* AMoAdView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AMoAdView.h; path = AMoAdInfeedDemo/AMoAdSdk/AMoAdView.h; sourceTree = "<group>"; };
 		E99EC1631C83F06F0094DFC4 /* AMoAdLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AMoAdLogger.h; path = AMoAdInfeedDemo/AMoAdSdk/AMoAdLogger.h; sourceTree = "<group>"; };
 		E9DC9BFF1C7DB79400F71A1A /* AMoAdInfeedDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AMoAdInfeedDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E9DC9C031C7DB79400F71A1A /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -117,6 +118,7 @@
 				E9DC9C221C7DB8B900F71A1A /* AMoAdItem.h */,
 				E9DC9C251C7DBA5100F71A1A /* AMoAdList.h */,
 				E99EC1631C83F06F0094DFC4 /* AMoAdLogger.h */,
+				E9721ADC1C97EA1200BE4C21 /* AMoAdView.h */,
 				E9DC9C231C7DB8B900F71A1A /* libAMoAd.a */,
 			);
 			name = AMoAdSdk;

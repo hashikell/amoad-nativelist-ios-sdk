@@ -7,6 +7,7 @@
 //
 #import "ViewController.h"
 #import "AMoAdInfeed.h"
+#import "AMoAdView.h"
 #import "AMoAdLogger.h"
 
 #pragma mark - ユーザーデータ例
@@ -117,7 +118,9 @@ static dispatch_queue_t iconLoadQueue;
 @property (nonatomic,readwrite,strong) NSArray<UserItem *> *dataArray;
 @end
 
-static NSString *const kSid1 = @"62056d310111552c000000000000000000000000000000000000000000000000";
+static NSString *const kSid1 = @"62056d310111552c000000000000000000000000000000000000000000000000"; // Infeed
+static NSString *const kSid2 = @"62056d310111552c000000000000000000000000000000000000000000000000"; // Display
+
 static const NSInteger kDataCount = 20;
 
 @implementation ViewController
@@ -125,21 +128,40 @@ static const NSInteger kDataCount = 20;
 - (void)viewDidLoad {
   [super viewDidLoad];
 
-  // [SDK] ログ出力を設定する
+  // [SDK Logger] ログ出力を設定する
   [AMoAdLogger sharedLogger].logging = YES;
   [AMoAdLogger sharedLogger].trace = YES;
+
+
+  // [SDK Display] タイムアウト時間（ミリ秒）を設定する：デフォルトは30,000ミリ秒
+  [AMoAdView setNetworkTimeoutMillis:5000];
+
+  // [SDK Display] テストのため広告リクエストサーバのURLを指定する
+//  [AMoAdView setAdRequestUrl:@"http://test-server.net/ad/json/"];
+
+  // [SDK Display] 広告Viewを生成する
+  AMoAdView *displayAd = [[AMoAdView alloc] initWithSid:kSid2
+                                             bannerSize:AMoAdBannerSizeB320x50
+                                                 hAlign:AMoAdHorizontalAlignCenter
+                                                 vAlign:AMoAdVerticalAlignTop
+                                             adjustMode:AMoAdAdjustModeResponsive
+                                               delegate:nil];
+
+  [self.view addSubview:displayAd];
+
+
+  // [SDK] タイムアウト時間を設定する：デフォルトは30,000ミリ秒
+  [AMoAdInfeed setNetworkTimeoutMillis:5000];
+
+  // [SDK] テストのため広告リクエストサーバのURLを指定する
+  //  [AMoAdInfeed setAdRequestUrl:@"http://test-server.net/n/v1/"];
+  
 
   // ユーザーCell
   [self.tableView registerNib:[UINib nibWithNibName:@"UserCell" bundle:[NSBundle mainBundle]] forCellReuseIdentifier:@"UserCellId"];
 
-  // [SDK] 広告Cell  ユーザーCellと同じNibを使うことができます。
-  //  [self.tableView registerNib:[UINib nibWithNibName:@"AdCell" bundle:[NSBundle mainBundle]] forCellReuseIdentifier:@"AdCell"];
-
   userItemLoadQueue = dispatch_queue_create("com.amoad.sample.UserItemLoadQueue", NULL);
   iconLoadQueue = dispatch_queue_create("com.amoad.sample.IconLoadQueue", NULL);
-
-  // [SDK] タイムアウト時間を設定する：デフォルトは30,000ミリ秒
-  [AMoAdInfeed setNetworkTimeoutMillis:5000];
 
   // PullToRefresh
   UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
