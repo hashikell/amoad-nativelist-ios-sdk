@@ -135,7 +135,7 @@ typedef NS_ENUM(NSInteger, AMoAdClickTransition) {
 
 /// クリック時に全てのLPへの遷移をハンドリングする
 /// Safari view controller を使う場合以外は、openURLでSafariを起動すること
-- (void)setClickHandler:(void (^)(NSString *url))handler;
+- (void)setClickCustomHandler:(void (^)(NSString *url))handler;
 
 
 + (CGSize)sizeWithBannerSize:(AMoAdBannerSize)bannerSize;
