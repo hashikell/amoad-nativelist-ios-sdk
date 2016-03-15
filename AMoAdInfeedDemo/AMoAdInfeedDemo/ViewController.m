@@ -146,6 +146,10 @@ static const NSInteger kDataCount = 20;
                                                  vAlign:AMoAdVerticalAlignTop
                                              adjustMode:AMoAdAdjustModeResponsive
                                                delegate:nil];
+  // [SDK Display] クリックハンドラーを設定する
+  [displayAd setClickCustomHandler:^(NSString *url) {
+    [self sampleClickHandler:url];
+  }];
 
   [self.view addSubview:displayAd];
 
@@ -222,6 +226,24 @@ static const NSInteger kDataCount = 20;
   }];
 }
 
+- (void)sampleClickHandler:(NSString *)url {
+  UIAlertController *alertController =
+  [UIAlertController alertControllerWithTitle:@"広告クリック"
+                                      message:[NSString stringWithFormat:@"URL: %@", url]
+                               preferredStyle:UIAlertControllerStyleAlert];
+
+  // addActionした順に左から右にボタンが配置されます
+  [alertController addAction:[UIAlertAction actionWithTitle:@"はい" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+    // otherボタンが押された時の処理
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:url]];
+  }]];
+  [alertController addAction:[UIAlertAction actionWithTitle:@"いいえ" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+    // cancelボタンが押された時の処理
+  }]];
+
+  [self presentViewController:alertController animated:YES completion:nil];
+}
+
 #pragma mark - UITableViewDataSource
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -281,22 +303,7 @@ static const NSInteger kDataCount = 20;
   if (ud.adList) {
     // [SDK] クリック時： handlerに遷移処理を委ねる
     [ud.adList onClickWithHandler:^(NSString *url) {
-
-      UIAlertController *alertController =
-      [UIAlertController alertControllerWithTitle:@"広告クリック"
-                                          message:[NSString stringWithFormat:@"URL: %@", url]
-                                   preferredStyle:UIAlertControllerStyleAlert];
-
-      // addActionした順に左から右にボタンが配置されます
-      [alertController addAction:[UIAlertAction actionWithTitle:@"はい" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-        // otherボタンが押された時の処理
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:url]];
-      }]];
-      [alertController addAction:[UIAlertAction actionWithTitle:@"いいえ" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-        // cancelボタンが押された時の処理
-      }]];
-
-      [self presentViewController:alertController animated:YES completion:nil];
+      [self sampleClickHandler:url];
     }];
   }
 }
