@@ -7,8 +7,36 @@
 //
 #import "ViewController.h"
 #import "AMoAdInfeed.h"
-#import "AMoAdView.h"
 #import "AMoAdLogger.h"
+
+#pragma mark - 画像ロードUtility
+
+@interface ImageLoader : NSObject
+@end
+
+@implementation ImageLoader
+
+// ユーザーデータと広告で同じ画像ロードの仕組みを使う
++ (void)loadImage:(NSURL *)url completion:(void (^)(UIImage *image))completion {
+  static dispatch_queue_t imageLoadQueue;
+  imageLoadQueue = dispatch_queue_create("com.amoad.sample.IconLoadQueue", NULL);
+
+  dispatch_async(imageLoadQueue, ^{
+    UIImage *image = nil;
+    NSURLRequest *request = [NSURLRequest requestWithURL:url];
+    NSURLResponse *response;
+    NSError *error;
+    NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
+    if (!error && response && data) {
+      image = [UIImage imageWithData:data];
+    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+      completion(image);
+    });
+  });
+}
+
+@end
 
 #pragma mark - ユーザーデータ例
 
@@ -20,9 +48,6 @@
 @property (nonatomic,readwrite,copy) NSString *text3;
 @property (nonatomic,readwrite,strong) AMoAdItem *adList;
 @end
-
-static dispatch_queue_t userItemLoadQueue;
-static dispatch_queue_t iconLoadQueue;
 
 @implementation UserItem
 // AMoAdItem -> UserItem 変換
@@ -39,25 +64,11 @@ static dispatch_queue_t iconLoadQueue;
   return self;
 }
 
-// ユーザーデータと広告で同じ画像ロードの仕組みを使う
-- (void)loadIcon:(void (^)(UIImage *icon))completion {
-  dispatch_async(iconLoadQueue, ^{
-    UIImage *icon = nil;
-    NSURLRequest *request = [NSURLRequest requestWithURL:self.iconUrl];
-    NSURLResponse *response;
-    NSError *error;
-    NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
-    if (!error && response && data) {
-      icon = [UIImage imageWithData:data];
-    }
-    dispatch_async(dispatch_get_main_queue(), ^{
-      completion(icon);
-    });
-  });
-}
-
 // ネットワークまたはローカルキャッシュからユーザーデータを読み込む
 + (void)loadUserItem:(NSInteger)count completion:(void (^)(NSArray<UserItem *> *userItems))completion {
+  static dispatch_queue_t userItemLoadQueue;
+  userItemLoadQueue = dispatch_queue_create("com.amoad.sample.UserItemLoadQueue", NULL);
+
   dispatch_async(userItemLoadQueue, ^{
     NSDate* localNow = [NSDate dateWithTimeIntervalSinceNow:[[NSTimeZone systemTimeZone] secondsFromGMT]];
     NSMutableArray<UserItem *> *userItems = [[NSMutableArray alloc] initWithCapacity:count];
@@ -115,11 +126,13 @@ static dispatch_queue_t iconLoadQueue;
 @property (weak, nonatomic) IBOutlet UILabel *adCountLabel;
 @property (weak, nonatomic) IBOutlet UILabel *beginIndexLabel;
 @property (weak, nonatomic) IBOutlet UILabel *intervalLabel;
+@property (weak, nonatomic) IBOutlet UIImageView *adView;
+@property (nonatomic,readwrite,strong) AMoAdItem *adItem;
 @property (nonatomic,readwrite,strong) NSArray<UserItem *> *dataArray;
 @end
 
 static NSString *const kSid1 = @"62056d310111552c000000000000000000000000000000000000000000000000"; // Infeed
-static NSString *const kSid2 = @"62056d310111552c000000000000000000000000000000000000000000000000"; // Display
+static NSString *const kSid2 = @"62056d310111552c000000000000000000000000000000000000000000000000"; // Top banner (Infeed)
 
 static const NSInteger kDataCount = 20;
 
@@ -133,39 +146,35 @@ static const NSInteger kDataCount = 20;
   [AMoAdLogger sharedLogger].trace = YES;
 
 
-  // [SDK Display] タイムアウト時間（ミリ秒）を設定する：デフォルトは30,000ミリ秒
-  [AMoAdView setNetworkTimeoutMillis:5000];
-
-  // [SDK Display] テストのため広告リクエストサーバのURLを指定する
-//  [AMoAdView setAdRequestUrl:@"http://test-server.net/ad/json/"];
-
-  // [SDK Display] 広告Viewを生成する
-  AMoAdView *displayAd = [[AMoAdView alloc] initWithSid:kSid2
-                                             bannerSize:AMoAdBannerSizeB320x50
-                                                 hAlign:AMoAdHorizontalAlignCenter
-                                                 vAlign:AMoAdVerticalAlignTop
-                                             adjustMode:AMoAdAdjustModeResponsive
-                                               delegate:nil];
-  // [SDK Display] クリックハンドラーを設定する
-  [displayAd setClickCustomHandler:^(NSString *url) {
-    [self sampleClickHandler:url];
-  }];
-
-  [self.view addSubview:displayAd];
-
-
-  // [SDK] タイムアウト時間を設定する：デフォルトは30,000ミリ秒
+  // [SDK] タイムアウト時間（ミリ秒）を設定する：デフォルトは30,000ミリ秒
   [AMoAdInfeed setNetworkTimeoutMillis:5000];
 
   // [SDK] テストのため広告リクエストサーバのURLを指定する
-  //  [AMoAdInfeed setAdRequestUrl:@"http://test-server.net/n/v1/"];
-  
+  //[AMoAdInfeed setAdRequestUrl:@"http://test-server.net/n/v1/"];
+
+  // Top banner 初期表示を非表示にする
+  self.adView.hidden = YES;
+
+
+  // Top banner クリック処理を設定する
+  self.adView.userInteractionEnabled = YES;
+  [self.adView addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTopBannerTouch:)]];
+
+  // [SDK Top banner]
+  [AMoAdInfeed loadWithSid:kSid2 completion:^(AMoAdList *adList, AMoAdResult result) {
+    if (result == AMoAdResultSuccess && adList.ads.count >= 1) {
+      self.adItem = adList.ads[0];
+      NSURL *url = [NSURL URLWithString:self.adItem.imageUrl];
+      [ImageLoader loadImage:url completion:^(UIImage *image) {
+        self.adView.image = image;
+        self.adView.hidden = NO;
+        [self.adItem sendImpression];
+      }];
+    }
+  }];
 
   // ユーザーCell
   [self.tableView registerNib:[UINib nibWithNibName:@"UserCell" bundle:[NSBundle mainBundle]] forCellReuseIdentifier:@"UserCellId"];
-
-  userItemLoadQueue = dispatch_queue_create("com.amoad.sample.UserItemLoadQueue", NULL);
-  iconLoadQueue = dispatch_queue_create("com.amoad.sample.IconLoadQueue", NULL);
 
   // PullToRefresh
   UIRefreshControl *refreshControl = [[UIRefreshControl alloc] init];
@@ -226,6 +235,14 @@ static const NSInteger kDataCount = 20;
   }];
 }
 
+- (void)onTopBannerTouch:(UITapGestureRecognizer*)sender {
+  if (self.adItem) {
+    [self.adItem onClickWithHandler:^(NSString *url) {
+      [self sampleClickHandler:url];
+    }];
+  }
+}
+
 - (void)sampleClickHandler:(NSString *)url {
   UIAlertController *alertController =
   [UIAlertController alertControllerWithTitle:@"広告クリック"
@@ -266,7 +283,7 @@ static const NSInteger kDataCount = 20;
   label3.text = ud.text3;
   iconView.image = nil;
 
-  [ud loadIcon:^(UIImage *icon) {
+  [ImageLoader loadImage:ud.iconUrl completion:^(UIImage *icon) {
     if ([label1.text isEqualToString:ud.text1] &&
         [label2.text isEqualToString:ud.text2] &&
         [label3.text isEqualToString:ud.text3] &&
