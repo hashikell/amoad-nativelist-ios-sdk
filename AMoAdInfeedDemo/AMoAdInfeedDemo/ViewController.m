@@ -108,7 +108,9 @@
     NSForegroundColorAttributeName: [UIColor whiteColor],
     NSParagraphStyleAttributeName: textStyle
     };
-  [text drawInRect:textRect withAttributes: textFontAttributes];
+  NSMutableAttributedString *attrText =
+  [[NSMutableAttributedString alloc] initWithString:text attributes:textFontAttributes];
+  [attrText drawInRect:textRect];
 
   UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
 
@@ -244,21 +246,26 @@ static const NSInteger kDataCount = 20;
 }
 
 - (void)sampleClickHandler:(NSString *)url {
-  UIAlertController *alertController =
-  [UIAlertController alertControllerWithTitle:@"広告クリック"
-                                      message:[NSString stringWithFormat:@"URL: %@", url]
-                               preferredStyle:UIAlertControllerStyleAlert];
+  if ([UIAlertController class]) {
+    UIAlertController *alertController =
+    [UIAlertController alertControllerWithTitle:@""
+                                        message:@"遷移して詳細を確認しますか？"
+                                 preferredStyle:UIAlertControllerStyleAlert];
 
-  // addActionした順に左から右にボタンが配置されます
-  [alertController addAction:[UIAlertAction actionWithTitle:@"はい" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-    // otherボタンが押された時の処理
+
+    // addActionした順に左から右にボタンが配置されます
+    [alertController addAction:[UIAlertAction actionWithTitle:@"キャンセル" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+      // cancelボタンが押された時の処理
+    }]];
+    [alertController addAction:[UIAlertAction actionWithTitle:@"確認する" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+      // otherボタンが押された時の処理
+      [[UIApplication sharedApplication] openURL:[NSURL URLWithString:url]];
+    }]];
+
+    [self presentViewController:alertController animated:YES completion:nil];
+  } else {
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:url]];
-  }]];
-  [alertController addAction:[UIAlertAction actionWithTitle:@"いいえ" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-    // cancelボタンが押された時の処理
-  }]];
-
-  [self presentViewController:alertController animated:YES completion:nil];
+  }
 }
 
 #pragma mark - UITableViewDataSource
