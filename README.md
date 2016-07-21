@@ -14,7 +14,7 @@
 
 ## Requirements
 
-iOS 6.0 or later
+iOS 7.0 or later
 
 ## Installing
 
@@ -37,10 +37,14 @@ static NSString *const kSid = @"62056d310111552c00000000000000000000000000000000
 
 [AMoAd Item API](AMoAdInfeedDemo/AMoAdInfeedDemo/AMoAdSdk/AMoAdItem.h)
 
+[AMoAd Logger API](AMoAdInfeedDemo/AMoAdInfeedDemo/AMoAdSdk/AMoAdLogger.h) 
+ ... [ログ出力設定](https://github.com/amoad/amoad-ios-sdk/wiki/Logger)
+
+
 ## Project Settings
 
 ### 設定例
 
-[ATS (App Transport Security) を抑制する](https://github.com/amoad/amoad-ios-sdk/blob/master/Documents/Install/Install.asciidoc#ats-app-transport-security-を抑制する)
+[ATS (App Transport Security) を抑制する](https://github.com/amoad/amoad-ios-sdk/wiki/Install#34-ats-app-transport-security-を抑制する)
 
 <img width="640" src="docs/res/ScreenShot04.png">
