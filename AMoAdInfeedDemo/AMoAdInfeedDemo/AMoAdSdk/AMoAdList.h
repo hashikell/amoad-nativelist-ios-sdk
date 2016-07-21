@@ -13,13 +13,13 @@
 @interface AMoAdList : NSObject
 
 /// 広告オブジェクトの配列
-@property (nonatomic,readwrite,strong) NSArray<AMoAdItem *> *ads;
+@property (nonatomic,copy) NSArray<AMoAdItem *> *ads;
 
 /// 表示開始位置
-@property (nonatomic,readwrite,assign) NSInteger beginIndex;
+@property (nonatomic) NSInteger beginIndex;
 
 /// 表示間隔
-@property (nonatomic,readwrite,assign) NSInteger interval;
+@property (nonatomic) NSInteger interval;
 
 + (AMoAdList *)parseDic:(NSDictionary *)dic;
 
