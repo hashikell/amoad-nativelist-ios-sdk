@@ -12,25 +12,25 @@
 @interface AMoAdItem : NSObject
 
 /// アイコン画像URL
-@property (nonatomic,readwrite,copy) NSString *iconUrl;
+@property (nonatomic,copy) NSString *iconUrl;
 
 /// メイン画像URL
-@property (nonatomic,readwrite,copy) NSString *imageUrl;
+@property (nonatomic,copy) NSString *imageUrl;
 
 /// ショートテキスト
-@property (nonatomic,readwrite,copy) NSString *titleShort;
+@property (nonatomic,copy) NSString *titleShort;
 
 /// ロングテキスト
-@property (nonatomic,readwrite,copy) NSString *titleLong;
+@property (nonatomic,copy) NSString *titleLong;
 
 /// サービス名
-@property (nonatomic,readwrite,copy) NSString *serviceName;
+@property (nonatomic,copy) NSString *serviceName;
 
 /// 遷移先URL
-@property (nonatomic,readwrite,copy) NSString *link;
+@property (nonatomic,copy) NSString *link;
 
 /// ユニット番号（広告取得数x4、キャッシュ数x2の場合、0, 1, 2, 3, 0, 1, 2, 3）
-@property (nonatomic,readwrite,assign) NSInteger unitNo;
+@property (nonatomic) NSInteger unitNo;
 
 /// 広告表示時に呼び出す
 - (void)sendImpression;
