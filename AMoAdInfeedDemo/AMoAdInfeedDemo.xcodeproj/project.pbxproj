@@ -312,6 +312,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/AMoAdInfeedDemo/AMoAdSdk",
 				);
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.amoad.sample.AMoAdInfeedDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -328,6 +329,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/AMoAdInfeedDemo/AMoAdSdk",
 				);
+				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.amoad.sample.AMoAdInfeedDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

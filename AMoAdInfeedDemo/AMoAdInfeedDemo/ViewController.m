@@ -46,7 +46,7 @@
 @property (nonatomic,readwrite,copy) NSString *text1;
 @property (nonatomic,readwrite,copy) NSString *text2;
 @property (nonatomic,readwrite,copy) NSString *text3;
-@property (nonatomic,readwrite,strong) AMoAdItem *adList;
+@property (nonatomic,readwrite,strong) AMoAdItem *adItem;
 @end
 
 @implementation UserItem
@@ -59,7 +59,7 @@
     self.text1 = amoad.serviceName;
     self.text2 = amoad.titleShort;
     self.text3 = amoad.titleLong;
-    self.adList = amoad;
+    self.adItem = amoad;
   }
   return self;
 }
@@ -170,7 +170,7 @@ static const NSInteger kDataCount = 20;
       [ImageLoader loadImage:url completion:^(UIImage *image) {
         self.adView.image = image;
         self.adView.hidden = NO;
-        [self.adItem sendImpression];
+        [AMoAdInfeed setViewabilityTrackingCell:self.adView adItem:self.adItem];
       }];
     }
   }];
@@ -305,10 +305,8 @@ static const NSInteger kDataCount = 20;
     }
   }];
 
-  if (ud.adList) {
-    // [SDK] Impを送信する
-    [ud.adList sendImpression];
-  }
+  // [SDK] Imp/Vimpを送信する
+  [AMoAdInfeed setViewabilityTrackingCell:cell adItem:ud.adItem];
 
   // 下までスクロールしたらデータを追加する
   if (indexPath.row >= self.dataArray.count - 1) {
@@ -324,9 +322,9 @@ static const NSInteger kDataCount = 20;
   [tableView deselectRowAtIndexPath:indexPath animated:YES]; // 選択状態の解除をします。
   UserItem *ud = self.dataArray[indexPath.row];
 
-  if (ud.adList) {
+  if (ud.adItem) {
     // [SDK] クリック時： handlerに遷移処理を委ねる
-    [ud.adList onClickWithHandler:^(NSString *url) {
+    [ud.adItem onClickWithHandler:^(NSString *url) {
       [self sampleClickHandler:url];
     }];
   }
