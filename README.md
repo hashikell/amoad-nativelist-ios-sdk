@@ -2,7 +2,7 @@
 <img width="172" height="61" src="http://www.amoad.com/images/logo.png">
 </div>
 
-# AMoAd Infeed Demo for iOS ver 4.10.0
+# AMoAd Infeed Demo for iOS ver 4.11.0
 
 <img width="160" height="284" src="docs/res/ScreenShot01.png">
 <img width="320" src="docs/res/ScreenShot03.png">
