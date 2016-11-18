@@ -2,7 +2,7 @@
 <img width="172" height="61" src="http://www.amoad.com/images/logo.png">
 </div>
 
-# AMoAd Infeed Demo for iOS ver 4.11.0
+# AMoAd Infeed Demo for iOS ver 4.12.0
 
 <img width="160" height="284" src="docs/res/ScreenShot01.png">
 <img width="320" src="docs/res/ScreenShot03.png">
@@ -14,7 +14,7 @@
 
 ## Requirements
 
-iOS 7.0 or later
+iOS 8.0 or later
 
 ## Installing
 
@@ -48,3 +48,4 @@ static NSString *const kSid = @"62056d310111552c00000000000000000000000000000000
 [ATS (App Transport Security) を抑制する](https://github.com/amoad/amoad-ios-sdk/wiki/Install#34-ats-app-transport-security-を抑制する)
 
 <img width="640" src="docs/res/ScreenShot04.png">
+
